@@ -1,0 +1,288 @@
+---
+import "../styles/global.css";
+import Topic_Navbar from "../components/Topic_Navbar.astro"
+import Head from "../components/Head.astro";
+import Footer from "../components/Footer.astro";
+import TopicSideBar from "../components/Topic_SideBar.astro";
+
+interface Props {
+    pageTitle ?: string,
+    description : string,
+    seoImagePath : string,
+    pageType ?: string,
+    isFullWidth ?: boolean,
+    courseData : any,
+    courseName : string
+}
+
+const {pageTitle = "CodeMaster - Learn to Code", pageType = "website", isFullWidth = true,  description, seoImagePath, courseData, courseName} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<Head 
+    {pageTitle}
+    {description}
+    {seoImagePath}
+    {pageType}
+>
+    <style is:global>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-dark: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+            --gradient-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .theme-transition {
+            transition: background-color 0.5s ease, color 0.3s ease;
+        }
+        
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+        }
+        
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-bg {
+            background: var(--gradient-primary);
+        }
+        
+        .dark .gradient-text-dark {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(white, white) padding-box,
+                        var(--gradient-primary) border-box;
+            border: 2px solid transparent;
+        }
+        
+        .dark .gradient-border {
+            background: linear-gradient(#1f2937, #1f2937) padding-box,
+                        var(--gradient-primary) border-box;
+        }
+        
+        /* Animation delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+    </style>
+
+    <style is:inline>
+        /* custom transitions & mobile optimizations */
+        body {
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* sidebar scroll */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .dark .sidebar-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+
+        .dark .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* dropdown submenu transition */
+        .dropdown-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dropdown-submenu.open {
+            max-height: 550px;
+        }
+
+        .topic-toggle .fa-chevron-down {
+            transition: transform 0.25s ease;
+        }
+
+        .topic-toggle.open .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        /* mobile sidebar overlay */
+        .mobile-sidebar-overlay {
+            transition: opacity 0.25s ease, visibility 0.25s;
+        }
+
+        /* prevent body scroll when sidebar open */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 1024px) {
+            body.sidebar-open {
+                overflow: auto;
+            }
+        }
+    </style>
+</Head>
+<body class="theme-transition bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+    <div class="flex flex-col min-h-screen">
+        <Topic_Navbar />
+        <section class="main flex">
+
+            <TopicSideBar {courseData} {courseName}/>
+            
+            <!-- Overlay + Sidebar logic: for desktop sidebar is always visible, for mobile we control -->
+            <div class="flex flex-1 relative">
+                <!-- Desktop sidebar duplicate visibility (actual aside above works for both) but the aside has same classes, it's visible on lg+. However we want the aside to be independent: we keep it, but on mobile hidden via transform, on lg visible. Fine. Also we need main content shift -->
+                <main class="flex-1 overflow-hidden px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full">
+                
+                    <div class="mx-auto" class:list={[isFullWidth ? "max-w-full lg:max-w-full" : "max-w-md lg:max-w-4xl"]}>
+                             
+                        <slot /> 
+                             
+                    </div>
+                </main>
+            </div>
+
+        </section>
+        
+        <Footer />
+    </div>   
+    
+    <script is:inline>
+        (function () {
+            // Dropdown toggle for subtopics (accordion + close others)
+            const toggles = document.querySelectorAll('.topic-toggle');
+
+            function closeAllDropdowns(exceptId = null) {
+                document.querySelectorAll('.dropdown-submenu').forEach(dd => {
+                    if (exceptId && dd.id === exceptId) return;
+                    dd.classList.remove('open');
+                });
+                document.querySelectorAll('.topic-toggle').forEach(t => {
+                    if (exceptId && t.getAttribute('data-target') === exceptId) return;
+                    t.classList.remove('open');
+                });
+            }
+
+            toggles.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const targetId = btn.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+                    const isOpen = target.classList.contains('open');
+                    if (!isOpen) closeAllDropdowns(targetId);
+                    if (target) {
+                        target.classList.toggle('open');
+                        btn.classList.toggle('open');
+                    }
+                });
+            });
+
+            // dark mode
+            const darkToggle = document.getElementById('darkModeToggle');
+            const darkIcon = document.getElementById('darkIcon');
+            const html = document.documentElement;
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+                if (darkIcon) darkIcon.className = 'fas fa-sun';
+            } else {
+                html.classList.remove('dark');
+                if (darkIcon) darkIcon.className = 'fas fa-moon';
+            }
+            if (darkToggle) {
+                darkToggle.addEventListener('click', () => {
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                        darkIcon.className = 'fas fa-moon';
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                        darkIcon.className = 'fas fa-sun';
+                    }
+                });
+            }
+            // mobile sidebar logic
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('mobileSidebarOverlay');
+            const openBtn = document.getElementById('mobileMenuBtn');
+            const closeBtn = document.getElementById('closeSidebarBtn');
+            function openSidebar() {
+                if (!mobileSidebar) return;
+                mobileSidebar.classList.remove('-translate-x-full');
+                mobileSidebar.classList.add('translate-x-0');
+                overlay.classList.remove('invisible', 'opacity-0');
+                overlay.classList.add('visible', 'opacity-100');
+                document.body.classList.add('sidebar-open');
+            }
+            function closeSidebar() {
+                if (!mobileSidebar) return;
+                mobileSidebar.classList.add('-translate-x-full');
+                mobileSidebar.classList.remove('translate-x-0');
+                overlay.classList.add('invisible', 'opacity-0');
+                overlay.classList.remove('visible', 'opacity-100');
+                document.body.classList.remove('sidebar-open');
+            }
+            if (openBtn) openBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+            // on resize > lg, if sidebar is open, close and reset
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    if (mobileSidebar && mobileSidebar.classList.contains('translate-x-0')) {
+                        closeSidebar();
+                    }
+                    document.body.classList.remove('sidebar-open');
+                }
+            });
+            // close on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mobileSidebar && mobileSidebar.classList.contains('translate-x-0')) {
+                    closeSidebar();
+                }
+            });
+        })();
+    </script>
+
+    <script is:inline src="/CodeMastery/assets/load-animation.js"></script>
+    
+</body>
+</html>

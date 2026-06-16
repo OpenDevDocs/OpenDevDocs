@@ -1,6 +1,5 @@
 ---
-import MainLayout from "../../layouts/MainLayout.astro";
-
+import CourseLayout from "../../layouts/CourseLayout.astro";
 import { courses } from "../../data/courses";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
@@ -8,47 +7,48 @@ import TopicCard from "../../components/TopicCard.astro";
 import { syllabus } from "../../content/syllabus";
 import { authors } from "../../data/authors";
 import AuthorChip from "../../components/AuthorChip.astro";
+import TopicSideBar from "../../components/Topic_SideBar.astro";
 
 export function getStaticPaths() {
-  
-  return courses.map(({ slug, courseTitle,cardText,descriptionText,imageFileName,isPaid,isPopular,level,color,isAvailable, authorId}) => {
-    return {
-        params: { slug },
-        props: { courseTitle,descriptionText,imageFileName,level, authorId},
-    };
-  });
+
+return courses.map(({ slug, courseTitle,cardText,descriptionText,imageFileName,isPaid,isPopular,level,color,isAvailable,
+authorId}) => {
+return {
+params: { slug },
+props: { courseTitle,descriptionText,imageFileName,level, authorId},
+};
+});
 }
 
 const {courseTitle,descriptionText,imageFileName,level, authorId} = Astro.props;
 const {slug} = Astro.params;
 
-let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseName.toLowerCase() === slug)
+let currentSyllabus = syllabus.filter((courseName :any) => courseName.courseName.toLowerCase() === slug)
 let beginner :any[] = [];
 let intermediate :any[] = [];
 let advance :any[] = [];
 
 if(currentSyllabus.length > 0){
-    beginner = currentSyllabus[0].topics.filter((topic )=> 
-        topic.difficultyLevel === "Beginner"
-    )
-    intermediate = currentSyllabus[0].topics.filter((topic )=> 
-        topic.difficultyLevel === "Intermediate"
-    )
-    
-    advance = currentSyllabus[0].topics.filter((topic )=> 
-        topic.difficultyLevel === "Advanced"
-    )
+beginner = currentSyllabus[0].topics.filter((topic )=>
+topic.difficultyLevel === "Beginner"
+)
+intermediate = currentSyllabus[0].topics.filter((topic )=>
+topic.difficultyLevel === "Intermediate"
+)
+
+advance = currentSyllabus[0].topics.filter((topic )=>
+topic.difficultyLevel === "Advanced"
+)
 }
 
 let courseAuthor = authors.filter((author) => author.authorId === authorId)
 
 ---
 <style is:inline>
-    
     .progress-gradient {
         background: var(--gradient-success);
     }
-    
+
     .topic-checkbox {
         appearance: none;
         width: 1.5rem;
@@ -59,12 +59,12 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
         position: relative;
         transition: all 0.2s ease;
     }
-    
+
     .topic-checkbox:checked {
         background: var(--gradient-success);
         border-color: transparent;
     }
-    
+
     .topic-checkbox:checked::after {
         content: '✓';
         position: absolute;
@@ -75,17 +75,31 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
     .dark .topic-checkbox {
         border-color: #4b5563;
     }
-    
-    .delay-100 { transition-delay: 100ms; }
-    .delay-200 { transition-delay: 200ms; }
-    .delay-300 { transition-delay: 300ms; }
-    .delay-400 { transition-delay: 400ms; }
-    .delay-500 { transition-delay: 500ms; }
-    
+
+    .delay-100 {
+        transition-delay: 100ms;
+    }
+
+    .delay-200 {
+        transition-delay: 200ms;
+    }
+
+    .delay-300 {
+        transition-delay: 300ms;
+    }
+
+    .delay-400 {
+        transition-delay: 400ms;
+    }
+
+    .delay-500 {
+        transition-delay: 500ms;
+    }
+
     .sticky-nav {
         position: sticky;
         top: 0;
@@ -93,32 +107,44 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
         z-index: 40;
     }
 </style>
-<MainLayout
-    pageTitle = {`FREE ${courseTitle} Mastery Course`}
-    description = ""
-    seoImagePath = ""
-    pageType = "website"
->
+<CourseLayout 
+    pageTitle={`FREE ${courseTitle} Mastery Course`} 
+    description="" 
+    seoImagePath="" 
+    pageType="website"
+    courseName = {slug}
+    courseData = {currentSyllabus}
+    >
 
     <!-- Course Header -->
-    <header class="pt-24 py-12 px-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-purple-300 dark:bg-purple-900 rounded-full -translate-y-32 translate-x-32 opacity-30 blur-3xl"></div>
-        <div class="container mx-auto relative z-10">
+    <header class="pt-24 py-12 px-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 relative rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-64 h-64 bg-purple-300 dark:bg-purple-900 rounded-full -translate-y-32 translate-x-32 opacity-30 blur-3xl">
+        </div>
+        <div class="container mx-auto relative z-1">
             <div class="flex flex-col lg:flex-row items-center justify-between">
                 <div class="lg:w-2/3 animate-on-scroll">
+                    <div class="mb-6 sm:mb-8">
+                        <span
+                            class="inline-block bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-full">
+                            <i class="fas fa-graduation-cap mr-1"></i> Complete JavaScript Tutorial
+                        </span>
+                    </div>
                     <div class="flex items-center space-x-2 mb-4">
-                        <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm font-medium">• {currentSyllabus.length > 0 && currentSyllabus[0].topics.length} modules</span>
-                        <span class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">• {level}</span>
+                        <span
+                            class="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full text-sm font-medium">•
+                            {currentSyllabus.length > 0 && currentSyllabus[0].topics.length} modules</span>
+                        <span
+                            class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">•
+                            {level}</span>
                     </div>
                     <h1 class="text-4xl md:text-5xl font-bold mb-4">{courseTitle} Mastery Course</h1>
                     <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{descriptionText}</p>
-                    
+
                     <div class="flex items-center space-x-6 flex-wrap gap-3">
-                        <AuthorChip 
-                            authorName = {courseAuthor[0].authorName}
-                            authorDesignation = {courseAuthor[0].authorDesignation}
-                            authorImage = {courseAuthor[0].authorImageFileName}
-                        /> 
+                        <AuthorChip authorName={courseAuthor[0].authorName}
+                            authorDesignation={courseAuthor[0].authorDesignation}
+                            authorImage={courseAuthor[0].authorImageFileName} />
                         <div class="flex items-center">
                             <div class="flex text-yellow-400 mr-2">
                                 <i class="fas fa-star"></i>
@@ -131,7 +157,7 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="lg:w-1/3 mt-8 lg:mt-0 flex justify-center animate-on-scroll delay-200">
                     <img src={`/CodeMastery/assets/course-logo/${imageFileName}.png`} class="size-75" alt="">
                 </div>
@@ -139,344 +165,293 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
         </div>
     </header>
 
+    <!-- stats responsive grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-10">
+        <div class="bg-white dark:bg-gray-800/60 rounded-xl p-4 border flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div>
+                <p class="text-xl font-bold">3</p>
+                <p class="text-xs text-gray-500">Learning levels</p>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800/60 rounded-xl p-4 border flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                <i class="fas fa-code"></i>
+            </div>
+            <div>
+                <p class="text-xl font-bold">50+</p>
+                <p class="text-xs text-gray-500">Code examples</p>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800/60 rounded-xl p-4 border flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+                <p class="text-xl font-bold">100%</p>
+                <p class="text-xs text-gray-500">Hands‑on</p>
+            </div>
+        </div>
+    </div>
+
     {
-        currentSyllabus.length > 0 ?
-        <!-- Progress Bar Section -->
-        <section id="progress" class="py-10 px-6">
-            <div class="container mx-auto">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 animate-on-scroll">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold">Your Progress</h2>
-                        <span id="progress-percentage" class="text-3xl font-bold gradient-text">0%</span>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Track your journey through the {courseTitle} course. Complete topics to increase your progress.</p>
-                    
-                    <div class="mb-4">
-                        <div class="flex justify-between text-sm mb-2">
-                            <span>Course Completion</span>
-                            <span>
-                                <span id="completed-count">0</span>
-                                 of {currentSyllabus.length > 0 && currentSyllabus[0].topics.length} topics
-                            </span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
-                            <div id="progress-bar" class="progress-gradient h-4 rounded-full transition-all duration-700" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold gradient-text" id="beginner-completed"><span id="beginnerCounter">0</span>/{beginner.length}</p>
-                            <p class="text-gray-600 dark:text-gray-300">Beginner Done</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="intermediate-completed"><span id="intermediateCounter">0</span>/{intermediate.length}</p>
-                            <p class="text-gray-600 dark:text-gray-300">Intermediate Done</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400" id="advanced-completed"><span id="advanceCounter">0</span>/{advance.length}</p>
-                            <p class="text-gray-600 dark:text-gray-300">Advanced Done</p>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="total-hours">0</p>
-                            <p class="text-gray-600 dark:text-gray-300">Hours Completed</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    
-        <!-- Course Topics -->
-        <section class="py-12 px-6 bg-gray-100/50 dark:bg-gray-800/50">
-            <div class="container mx-auto">
-                <!-- Beginner Section -->
-                <div class="mb-16 animate-on-scroll">
-                    <div class="flex items-center mb-8">
-                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
-                            <i class="fas fa-seedling text-green-600 dark:text-green-400 text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-bold">Beginner Level</h2>
-                            <p class="text-gray-600 dark:text-gray-300">Foundational concepts to get you started with JavaScript</p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Topic Card Template - Will be generated by JS -->
-                    {
-                    (beginner.length > 0) &&
-                    beginner.map((topic)=>(
-                        <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Easy"} topicId={topic.slug} topicLevel={topic.difficultyLevel} topicTitle={topic.topicName}/>    
-                    ))
-                    }
-                    </div>
-                </div>
-                
-                <!-- Intermediate Section -->
-                <div class="mb-16 animate-on-scroll delay-200">
-                    <div class="flex items-center mb-8">
-                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
-                            <i class="fas fa-chart-line text-blue-600 dark:text-blue-400 text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-bold">Intermediate Level</h2>
-                            <p class="text-gray-600 dark:text-gray-300">Deep dive into core JavaScript concepts and patterns</p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Topic Card Template - Will be generated by JS -->
-                    {
-                    (intermediate.length > 0) &&
-                    intermediate.map((topic)=>(
-                        <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Intermediate"} topicId={topic.slug} topicLevel={topic.difficultyLevel} topicTitle={topic.topicName}/>    
-                    ))
-                    }
-                    </div>
-                </div>
-                
-                <!-- Advanced Section -->
-                <div class="animate-on-scroll delay-300">
-                    <div class="flex items-center mb-8">
-                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
-                            <i class="fas fa-rocket text-purple-600 dark:text-purple-400 text-xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-3xl font-bold">Advanced Level</h2>
-                            <p class="text-gray-600 dark:text-gray-300">Master advanced JavaScript patterns and modern features</p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Topic Card Template - Will be generated by JS -->
-                    {
-                    (advance.length > 0) &&
-                    advance.map((topic)=>(
-                        <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Advance"} topicId={topic.slug} topicLevel={topic.difficultyLevel} topicTitle={topic.topicName}/>    
-                    ))
-                    }
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        : <section class="py-12 px-6 bg-gray-100/50 dark:bg-gray-800/50">
-            <div class="flex items-center justify-center mb-8">
-                <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
-                    <i class="fas fa-seedling text-green-600 dark:text-green-400 text-xl"></i>
-                </div>
-                <div>
-                    <h2 class="text-3xl font-bold">Coming Soon</h2>
-                    <p class="text-gray-600 dark:text-gray-300">This course is in the making. Stay Tuned</p>
-                </div>
-            </div>
-        </section>
-    }
-
-    <!-- Resources Section -->
-    <section id="resources" class="py-16 px-6 hidden">
+    currentSyllabus.length > 0 ?
+    <!-- Progress Bar Section -->
+    <section id="progress" class="py-10 px-6">
         <div class="container mx-auto">
-            <div class="text-center mb-12 animate-on-scroll">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Course <span class="gradient-text">Resources</span></h2>
-                <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Complement your learning with these additional resources to boost your JavaScript skills</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Interview Questions Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover animate-on-scroll delay-100">
-                    <div class="p-6">
-                        <div class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6">
-                            <i class="fas fa-question-circle text-white text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4">Interview Questions</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-6">Prepare for JavaScript interviews with 200+ commonly asked questions, categorized by difficulty level and topic.</p>
-                        <ul class="space-y-2 mb-6">
-                            <li class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                                <span>Closures & Scope</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                                <span>Asynchronous JavaScript</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                                <span>ES6+ Features</span>
-                            </li>
-                        </ul>
-                        <a href={`/CodeMastery/${slug}/interview-questions`} class="block text-center w-full py-3 gradient-bg text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
-                            Practice Questions
-                        </a>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 animate-on-scroll">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Your Progress</h2>
+                    <span id="progress-percentage" class="text-3xl font-bold gradient-text">0%</span>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Track your journey through the {courseTitle} course.
+                    Complete topics to increase your progress.</p>
+
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span>Course Completion</span>
+                        <span>
+                            <span id="completed-count">0</span>
+                            of {currentSyllabus.length > 0 && currentSyllabus[0].topics.length} topics
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
+                        <div id="progress-bar" class="progress-gradient h-4 rounded-full transition-all duration-700"
+                            style="width: 0%"></div>
                     </div>
                 </div>
-                
-                <!-- Mock Test Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover animate-on-scroll delay-200">
-                    <div class="p-6">
-                        <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
-                            <i class="fas fa-clock text-white text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4">Timed Mock Tests</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-6">Simulate real interview conditions with timed tests. Get detailed performance analytics and improvement suggestions.</p>
-                        <div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mb-6">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-medium">Test Features:</span>
-                                <span class="text-blue-600 dark:text-blue-400 font-bold">5 Tests</span>
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300">
-                                <div class="flex justify-between mb-1">
-                                    <span>Beginner Level</span>
-                                    <span>2 tests</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Advanced Level</span>
-                                    <span>3 tests</span>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                            Take a Test
-                        </button>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                    <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold gradient-text" id="beginner-completed"><span
+                                id="beginnerCounter">0</span>/{beginner.length}</p>
+                        <p class="text-gray-600 dark:text-gray-300">Beginner Done</p>
                     </div>
-                </div>
-                
-                <!-- Project Ideas Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover animate-on-scroll delay-300">
-                    <div class="p-6">
-                        <div class="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mb-6">
-                            <i class="fas fa-lightbulb text-white text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-4">Project Ideas for Resume</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-6">Build impressive portfolio projects with step-by-step guides. From to-do apps to full-stack applications.</p>
-                        <div class="grid grid-cols-2 gap-3 mb-6">
-                            <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                                <i class="fas fa-gamepad text-green-600 dark:text-green-400 text-xl mb-2"></i>
-                                <p class="text-sm font-medium">Game Development</p>
-                            </div>
-                            <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                                <i class="fas fa-chart-bar text-green-600 dark:text-green-400 text-xl mb-2"></i>
-                                <p class="text-sm font-medium">Data Visualization</p>
-                            </div>
-                            <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                                <i class="fas fa-shopping-cart text-green-600 dark:text-green-400 text-xl mb-2"></i>
-                                <p class="text-sm font-medium">E-commerce</p>
-                            </div>
-                            <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 text-center">
-                                <i class="fas fa-mobile-alt text-green-600 dark:text-green-400 text-xl mb-2"></i>
-                                <p class="text-sm font-medium">Mobile Apps</p>
-                            </div>
-                        </div>
-                        <button class="w-full py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
-                            Explore Projects
-                        </button>
+                    <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="intermediate-completed"><span
+                                id="intermediateCounter">0</span>/{intermediate.length}</p>
+                        <p class="text-gray-600 dark:text-gray-300">Intermediate Done</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400" id="advanced-completed"><span
+                                id="advanceCounter">0</span>/{advance.length}</p>
+                        <p class="text-gray-600 dark:text-gray-300">Advanced Done</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-green-600 dark:text-green-400" id="total-hours">0</p>
+                        <p class="text-gray-600 dark:text-gray-300">Hours Completed</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-</MainLayout>
 
-<script is:inline define:vars={{courseTitle , currentSyllabus : currentSyllabus[0] }}>
-    
-    let allTopicCheckBox = document.querySelectorAll(".topic-checkbox");
-    let savedCompletionProgress = [];
+    <!-- Course Topics -->
+    <section>
+        <div class="container mx-auto">
+            <!-- Beginner Section bg-gray-100/50 dark:bg-gray-800/50 -->
+            <div
+                class="mb-16 animate-on-scroll px-6 py-12 rounded-xl border border-emerald-200 dark:border-emerald-800/50 bg-white dark:bg-gray-800/40">
+                <div class="flex items-center mb-8">
+                    <div
+                        class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-seedling text-green-600 dark:text-green-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold">Beginner Level</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Foundational concepts to get you started with
+                            JavaScript</p>
+                    </div>
+                </div>
 
-    savedCompletionProgress = JSON.parse(localStorage.getItem("completionProgress"));
-    
-    if(!savedCompletionProgress) 
-        savedCompletionProgress = [];
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Topic Card Template - Will be generated by JS -->
+                    {
+                    (beginner.length > 0) &&
+                    beginner.map((topic)=>(
+                    <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Easy"} topicId={topic.slug}
+                        topicLevel={topic.difficultyLevel} topicTitle={topic.topicName} />
+                    ))
+                    }
+                </div>
+            </div>
 
-    // console.log(savedCompletionProgress);
+            <!-- Intermediate Section -->
+            <div
+                class="mb-16 animate-on-scroll px-6 py-12 delay-200 rounded-xl border border-blue-200 dark:border-blue-800/50 bg-white dark:bg-gray-800/40">
+                <div class="flex items-center mb-8">
+                    <div
+                        class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold">Intermediate Level</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Deep dive into core JavaScript concepts and patterns
+                        </p>
+                    </div>
+                </div>
 
-    if(savedCompletionProgress.length == 0){
-        // Syllabus From Server
-        currentSyllabus.topics.forEach(topic => {
-            topic.isComplete = false
-        });
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Topic Card Template - Will be generated by JS -->
+                    {
+                    (intermediate.length > 0) &&
+                    intermediate.map((topic)=>(
+                    <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Intermediate"}
+                        topicId={topic.slug} topicLevel={topic.difficultyLevel} topicTitle={topic.topicName} />
+                    ))
+                    }
+                </div>
+            </div>
+
+            <!-- Advanced Section -->
+            <div
+                class="animate-on-scroll px-6 py-12 delay-300 rounded-xl border border-purple-200 dark:border-purple-800/50 bg-white dark:bg-gray-800/40">
+                <div class="flex items-center mb-8">
+                    <div
+                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-rocket text-purple-600 dark:text-purple-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold">Advanced Level</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Master advanced JavaScript patterns and modern
+                            features</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Topic Card Template - Will be generated by JS -->
+                    {
+                    (advance.length > 0) &&
+                    advance.map((topic)=>(
+                    <TopicCard courseName={slug} topicSlug={topic.slug} topicDuration={"Advance"} topicId={topic.slug}
+                        topicLevel={topic.difficultyLevel} topicTitle={topic.topicName} />
+                    ))
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    : <section class="py-12 px-6 bg-gray-100/50 dark:bg-gray-800/50">
+        <div class="flex items-center justify-center mb-8">
+            <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+                <i class="fas fa-seedling text-green-600 dark:text-green-400 text-xl"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold">Coming Soon</h2>
+                <p class="text-gray-600 dark:text-gray-300">This course is in the making. Stay Tuned</p>
+            </div>
+        </div>
+    </section>
+    }
+
+    <script is:inline define:vars={{courseTitle , currentSyllabus : currentSyllabus[0] }}>
         
-        savedCompletionProgress.push(currentSyllabus);
-    }
+        let allTopicCheckBox = document.querySelectorAll(".topic-checkbox");
+        let savedCompletionProgress = [];
     
-    if (!savedCompletionProgress.some(courseSyllabus => courseSyllabus.courseName === currentSyllabus.courseName)) {
-        savedCompletionProgress.push(currentSyllabus);
-    }
+        savedCompletionProgress = JSON.parse(localStorage.getItem("completionProgress"));
+        
+        if(!savedCompletionProgress) 
+            savedCompletionProgress = [];
     
-    localStorage.setItem("completionProgress", JSON.stringify(savedCompletionProgress));
-    updateTopicCompletion();
-    updateProgressStats();
-
-    // Handling Click of the topic Checkbox
-    allTopicCheckBox.forEach(TopicCheckBox => {
-        TopicCheckBox.addEventListener("click", ()=>{
-
+        // console.log(savedCompletionProgress);
+    
+        if(savedCompletionProgress.length == 0){
+            // Syllabus From Server
+            currentSyllabus.topics.forEach(topic => {
+                topic.isComplete = false
+            });
+            
+            savedCompletionProgress.push(currentSyllabus);
+        }
+        
+        if (!savedCompletionProgress.some(courseSyllabus => courseSyllabus.courseName === currentSyllabus.courseName)) {
+            savedCompletionProgress.push(currentSyllabus);
+        }
+        
+        localStorage.setItem("completionProgress", JSON.stringify(savedCompletionProgress));
+        updateTopicCompletion();
+        updateProgressStats();
+    
+        // Handling Click of the topic Checkbox
+        allTopicCheckBox.forEach(TopicCheckBox => {
+            TopicCheckBox.addEventListener("click", ()=>{
+    
+                savedCompletionProgress.forEach(course => {
+                    if(course.courseName === courseTitle){
+                        course.topics.forEach(topic => {
+                            if(TopicCheckBox.dataset.id === topic.slug){
+                                if(TopicCheckBox.checked)
+                                    topic.isComplete = true;
+                                else
+                                    topic.isComplete = false;
+                            }
+                        });
+                    }
+                });
+                
+                localStorage.setItem("completionProgress", JSON.stringify(savedCompletionProgress));
+                updateProgressStats();
+            })
+        });
+    
+        function updateTopicCompletion() {
             savedCompletionProgress.forEach(course => {
                 if(course.courseName === courseTitle){
                     course.topics.forEach(topic => {
-                        if(TopicCheckBox.dataset.id === topic.slug){
-                            if(TopicCheckBox.checked)
-                                topic.isComplete = true;
-                            else
-                                topic.isComplete = false;
+                        if(topic.isComplete === true){
+                            
+                            allTopicCheckBox.forEach(TopicCheckBox => {
+                                if(TopicCheckBox.dataset.id === topic.slug){
+                                    TopicCheckBox.checked = true;
+                                }
+                            });
+                        
                         }
                     });
                 }
             });
+        }
+    
+        function updateProgressStats(){
             
-            localStorage.setItem("completionProgress", JSON.stringify(savedCompletionProgress));
-            updateProgressStats();
-        })
-    });
-
-    function updateTopicCompletion() {
-        savedCompletionProgress.forEach(course => {
-            if(course.courseName === courseTitle){
-                course.topics.forEach(topic => {
-                    if(topic.isComplete === true){
-                        
-                        allTopicCheckBox.forEach(TopicCheckBox => {
-                            if(TopicCheckBox.dataset.id === topic.slug){
-                                TopicCheckBox.checked = true;
-                            }
-                        });
-                    
-                    }
-                });
-            }
-        });
-    }
-
-    function updateProgressStats(){
-        
-        let beginnerCounter = 0;
-        let intermediateCounter = 0;
-        let advanceCounter = 0;
-
-        savedCompletionProgress.forEach(course => {
-            if(course.courseName === courseTitle){
-                course.topics.forEach(topic => {
-                    if(topic.isComplete == true){
-                        if(topic.difficultyLevel == "Beginner")
-                            beginnerCounter++;
-                        if(topic.difficultyLevel == "Intermediate")
-                            intermediateCounter++;
-                        if(topic.difficultyLevel == "Advance")
-                            advanceCounter++;
-                    }
-
-                    document.getElementById("beginnerCounter").textContent = beginnerCounter;
-                    document.getElementById("intermediateCounter").textContent = intermediateCounter;
-                    document.getElementById("advanceCounter").textContent = advanceCounter;
-                });
-            }
-        });
-
-        let totalCompletion = beginnerCounter + intermediateCounter + advanceCounter;
-        document.getElementById("completed-count").textContent = totalCompletion;
-
-        let thisCourse = savedCompletionProgress.filter((course) => course.courseName === courseTitle)[0];
-
-        document.getElementById("progress-percentage").textContent = ((totalCompletion/thisCourse.topics.length) * 100).toFixed(1).toString() + "%";
-        document.getElementById("progress-bar").style.width = ((totalCompletion/thisCourse.topics.length) * 100).toFixed(1).toString() + "%";
-    }
-
-</script>
+            let beginnerCounter = 0;
+            let intermediateCounter = 0;
+            let advanceCounter = 0;
+    
+            savedCompletionProgress.forEach(course => {
+                if(course.courseName === courseTitle){
+                    course.topics.forEach(topic => {
+                        if(topic.isComplete == true){
+                            if(topic.difficultyLevel == "Beginner")
+                                beginnerCounter++;
+                            if(topic.difficultyLevel == "Intermediate")
+                                intermediateCounter++;
+                            if(topic.difficultyLevel == "Advance")
+                                advanceCounter++;
+                        }
+    
+                        document.getElementById("beginnerCounter").textContent = beginnerCounter;
+                        document.getElementById("intermediateCounter").textContent = intermediateCounter;
+                        document.getElementById("advanceCounter").textContent = advanceCounter;
+                    });
+                }
+            });
+    
+            let totalCompletion = beginnerCounter + intermediateCounter + advanceCounter;
+            document.getElementById("completed-count").textContent = totalCompletion;
+    
+            let thisCourse = savedCompletionProgress.filter((course) => course.courseName === courseTitle)[0];
+    
+            document.getElementById("progress-percentage").textContent = ((totalCompletion/thisCourse.topics.length) * 100).toFixed(1).toString() + "%";
+            document.getElementById("progress-bar").style.width = ((totalCompletion/thisCourse.topics.length) * 100).toFixed(1).toString() + "%";
+        }
+    
+    </script>
+</CourseLayout>
