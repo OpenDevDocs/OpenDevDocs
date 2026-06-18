@@ -48,7 +48,7 @@ function getArticleByFileName(Filename : string){
     return filteredObjects.find(article => article.filePath === Filename)
 }
 
-let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseName.toLowerCase() === course.toLowerCase())
+let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseName.toLowerCase() === course?.toLowerCase())
 
 ---
 
@@ -60,12 +60,13 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
     courseName = {courseData?.courseTitle || ""}
     courseData = {currentSyllabus}
     courseImage = {courseData?.imageFileName || ""}
-    courseSlug = {course}
+    courseSlug = {course || ""}
+    isFullWidth = {false}
     >
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 
     <!-- Main Content -->
-    <main class="container mx-auto pt-24 px-6 py-8">
+    <article class="container mx-auto pt-24 px-6 py-8">
         <!-- Page Header -->
         <div class="mb-8 animate-on-scroll">
             <div class="flex items-center space-x-4 mb-4">
@@ -112,7 +113,6 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                         <i class="far fa-clock mr-1"></i>
                         Published on: {getFormattedDate(article.data.publishDate)}
-                    </div>
                     {
                         getFormattedDate(article.data.updateDate) != getFormattedDate(article.data.publishDate) &&
                         <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -120,11 +120,12 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
                             Last updated: {getFormattedDate(article.data.updateDate)}
                         </div>
                     }
+                    </div>
                 </div>
     
                 <div class="flex items-center space-x-4">
                     <button id="mark-complete"
-                        class="px-6 py-2 gradient-bg text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
+                        class="px-6 py-2 gradient-bg text-white font-medium rounded-lg hover:opacity-90 transition-opacity"> <!-- bg-linear-to-r from-green-400 to-lime-500 -->
                         <i class="far fa-check-circle mr-2"></i>
                         <span>Mark as Complete</span>
                     </button>
@@ -259,7 +260,7 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
             </div>
         </section>
         <span class="hidden bg-green-500 dark:bg-green-500"></span>
-    </main>
+    </article>
     <!-- Prism.js for code highlighting -->
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
@@ -291,6 +292,7 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
 
         // Initialize Prism highlighting
         document.addEventListener('DOMContentLoaded', () => {
+            updateCompletion(false);
             Prism.highlightAll();
 
             // Initialize animations
@@ -300,20 +302,48 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
         });
 
         // Mark as Complete for Topic
-        let savedCompletionProgress = JSON.parse(localStorage.getItem("completionProgress"));;
-        document.getElementById("mark-complete").addEventListener("click", ()=>{
+        let savedCompletionProgress = JSON.parse(localStorage.getItem("completionProgress"));
+        const updateCompletion = (update = true) => {
             savedCompletionProgress.forEach(course => {
                 if(course.courseName === courseTitle){
-                    debugger
                     course.topics.forEach(topic => {
                         if(topic.slug === slug){
-                            topic.isComplete = true;
+                            if(update){
+                                if(topic.isComplete == true){
+                                    topic.isComplete = false;
+                                    document.getElementById("mark-complete").querySelector("span").textContent="Mark as Complete";
+                                    document.getElementById("mark-complete").classList.add("gradient-bg");
+                                    document.getElementById("mark-complete").classList.remove("bg-linear-to-r","from-green-400", "to-lime-500");
+                                }
+                                else{
+                                    document.getElementById("mark-complete").querySelector("span").textContent="Completed"
+                                    document.getElementById("mark-complete").classList.remove("gradient-bg");
+                                    document.getElementById("mark-complete").classList.add("bg-linear-to-r","from-green-400", "to-lime-500");
+                                    topic.isComplete = true;
+                                }
+                            }
+                            else{
+                                if(topic.isComplete == true){
+                                    document.getElementById("mark-complete").querySelector("span").textContent="Completed"
+                                    document.getElementById("mark-complete").classList.remove("gradient-bg");
+                                    document.getElementById("mark-complete").classList.add("bg-linear-to-r","from-green-400", "to-lime-500");
+                                }
+                                else{
+                                    document.getElementById("mark-complete").querySelector("span").textContent="Mark as Complete";
+                                    document.getElementById("mark-complete").classList.add("gradient-bg");
+                                    document.getElementById("mark-complete").classList.remove("bg-linear-to-r","from-green-400", "to-lime-500");
+                                }
+                            }
                         }
                     });
                 }
             });
             
             localStorage.setItem("completionProgress", JSON.stringify(savedCompletionProgress));
+        }
+
+        document.getElementById("mark-complete").addEventListener("click", ()=>{
+            updateCompletion(true);
         })
     </script>
 </CourseLayout>
