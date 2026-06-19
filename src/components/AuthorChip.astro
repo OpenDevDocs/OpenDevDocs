@@ -15,7 +15,7 @@ const { authorName, authorDesignation, authorImage} = Astro.props;
         <Image format='webp' width={300} height={300} src={
             authorImage.includes("http") ? authorImage : `https://secureurl.github.io/cloud/OpenDevDocs/author-imgs/${authorImage}`} 
             alt={authorName}
-            class="w-full h-full object-cover">
+            class="w-full h-full object-cover" />
     </div>
     <div class="ml-3">
         <p class="font-medium">{authorName}</p>
