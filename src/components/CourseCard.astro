@@ -8,6 +8,7 @@ interface Props {
     slug: string,
     color: string,
 }
+import { Image } from "astro:assets";
 import { syllabus } from "../content/syllabus";
 
 const {courseTitle, cardText, imageFileName, isPaid, level, slug, color} = Astro.props;
@@ -19,7 +20,7 @@ let currentSyllabus = syllabus.filter((courseName :any) =>  courseName.courseNam
         <div class="flex items-center justify-between mb-4">
             <!-- Course Image -->
             <div class="w-20 h-1w-20 rounded-xl overflow-hidden">
-                <img src={`/_image?href=https://secureurl.github.io/cloud/OpenDevDocs/course-logo/${imageFileName}.png&w=80&h=80&q=80&f=webp`} alt={`${courseTitle} Course`}
+                <Image width={80} height={80} src={`/_image?href=https://secureurl.github.io/cloud/OpenDevDocs/course-logo/${imageFileName}.png&w=80&h=80&q=80&f=webp`} alt={`${courseTitle} Course`}
                     class="w-full h-full object-cover border-0" />
             </div>
             <span

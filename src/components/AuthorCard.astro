@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 interface Props {
     authorName : string,
     authorDesignation : string,
@@ -13,7 +15,7 @@ const { authorName, authorDesignation, authorImage, authorBio} = Astro.props;
     class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden card-hover animate-on-scroll delay-100 visible">
     <div class="md:flex">
         <div class="md:shrink-0 p-6">
-            <img class="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg"
+            <Image width={300} height={300} class="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg"
                 src={authorImage.includes("http") ? authorImage : `/_image?href=https://secureurl.github.io/cloud/OpenDevDocs/author-imgs/${authorImage}&w=300&h=300&q=80&f=webp`} alt={authorName}>
         </div>
         <div class="p-8">
