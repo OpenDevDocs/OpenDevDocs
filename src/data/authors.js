@@ -6,7 +6,7 @@ export const authors = [
         "authorImageFileName" : "bishal-biswas.png",
         "bio" : "I am the Best in the Coding World."
     },
-    {
+    /* {
         "authorId" : "rohit-sharma",
         "authorName" : "Rohit Sharma",
         "authorDesignation" : "Cricketer",
@@ -19,5 +19,5 @@ export const authors = [
         "authorDesignation" : "Entreprenuer",
         "authorImageFileName" : "https://randomuser.me/api/portraits/men/45.jpg",
         "bio" : "I am the Best in the Business World"
-    },
+    }, */
 ];

@@ -10,19 +10,20 @@ import { Image } from "astro:assets";
 
 export function getStaticPaths() {
 
-return courses.filter(course => course.isAvailable == true).map(({ slug, courseTitle, cardText, descriptionText, imageFileName, isCompleted, level, color, isAvailable,
+return courses.filter(course => course.isAvailable == true).map(({ slug, courseTitle, cardText, descriptionText, imageFileName, isCompleted, tags, color, isAvailable,
     authorId, gradientClass}) => {
     return {
         params: { slug },
-        props: { courseTitle, descriptionText, imageFileName, isCompleted, level, authorId, gradientClass },
+        props: { courseTitle, descriptionText, imageFileName, isCompleted, tags, authorId, gradientClass },
     };
 });
 }
 
-const {courseTitle,descriptionText,imageFileName,level, isCompleted, authorId, gradientClass} = Astro.props;
+const {courseTitle,descriptionText,imageFileName,tags, isCompleted, authorId, gradientClass} = Astro.props;
 const {slug} = Astro.params;
 
-let currentSyllabus = syllabus.filter((courseName :any) => courseName.courseName.toLowerCase() === slug)
+
+let currentSyllabus = syllabus.filter((courseName :any) => courseName.courseName.toLowerCase() === courseTitle.toLowerCase())
 let beginner :any[] = [];
 let intermediate :any[] = [];
 let advance :any[] = [];
@@ -140,26 +141,30 @@ let courseAuthor = authors.filter((author) => author.authorId === authorId)
                             {currentSyllabus.length > 0 && currentSyllabus[0].topics.length} modules</span>
                         <span
                             class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">•
-                            {level}</span>
+                            {tags}</span>
                     </div>
-                    <h1 class="text-4xl md:text-5xl font-bold mb-4">{courseTitle} Mastery Course</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-linear-to-r bg-clip-text text-transparent leading-16" class:list={[gradientClass]}>{courseTitle} Mastery Course</h1>
                     <p class="text-lg text-gray-600 dark:text-gray-300 mb-8">{descriptionText}</p>
 
-                    <div class="flex items-center space-x-6 flex-wrap gap-3">
-                        <AuthorChip authorName={courseAuthor[0].authorName}
-                            authorDesignation={courseAuthor[0].authorDesignation}
-                            authorImage={courseAuthor[0].authorImageFileName} />
-                        <div class="flex items-center">
-                            <div class="flex text-yellow-400 mr-2">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
+                    {
+                        /* Hiding Author and Course Rating */
+                        false &&
+                        <div class="flex items-center space-x-6 flex-wrap gap-3">
+                            <AuthorChip authorName={courseAuthor[0].authorName}
+                                authorDesignation={courseAuthor[0].authorDesignation}
+                                authorImage={courseAuthor[0].authorImageFileName} />
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400 mr-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600 dark:text-gray-300">4.8 (2,450 reviews)</span>
                             </div>
-                            <span class="text-gray-600 dark:text-gray-300">4.8 (2,450 reviews)</span>
                         </div>
-                    </div>
+                    }
                 </div>
 
                 <div class="lg:w-1/3 mt-8 lg:mt-0 flex justify-center animate-on-scroll delay-200">

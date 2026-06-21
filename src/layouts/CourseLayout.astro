@@ -175,7 +175,7 @@ const {pageTitle = getSiteName() + "- Learn to Code", pageType = "website", isFu
             
             <!-- Overlay + Sidebar logic: for desktop sidebar is always visible, for mobile we control -->
             <!-- flex-1 w-full -->
-            <div class="flex relative w-340">
+            <div class="flex flex-1 relative">
                 <!-- Desktop sidebar duplicate visibility (actual aside above works for both) but the aside has same classes, it's visible on lg+. However we want the aside to be independent: we keep it, but on mobile hidden via transform, on lg visible. Fine. Also we need main content shift -->
                 <main class="flex-1 overflow-hidden px-4 sm:px-6 lg:px-8 py-6 md:py-8 w-full">
                 
